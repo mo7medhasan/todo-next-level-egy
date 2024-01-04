@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 const SUPABASE_URL =process.env.REACT_PUBLIC_SUPABASE_URL|| 'https://olhdtjfrlomrfdektykk.supabase.co';
 const SUPABASE_KEY = process.env.REACT_PUBLIC_SUPABASE_KEY||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9saGR0amZybG9tcmZkZWt0eWtrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDQzMTI2ODgsImV4cCI6MjAxOTg4ODY4OH0.W-vEpG8AQL6nvfEkjxi0L1Ph8ubvpEPqAz1uefKQRBY';
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const AppContext = createContext();
 
@@ -17,10 +17,10 @@ export const useAppContext = () => {
 
 
 export const AppProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [userCur, setUserCur] = useState(null);
   const [tasks, setTasks] = useState([]);
   const signUp = async (email, password) => {
-    const { user, error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
@@ -28,12 +28,14 @@ export const AppProvider = ({ children }) => {
       console.error('Error signing up:', error.message);
       return { error };
     }
-    setUser(user);
-    return { user };
+   if(data?.user) setUserCur(data?.user);
+   
+
+    return { data };
   };
 
   const signIn = async (email, password) => {
-    const { user, error } = await supabase.auth.signIn({
+    const {data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -41,28 +43,29 @@ export const AppProvider = ({ children }) => {
       console.error('Error signing in:', error.message);
       return { error };
     }
-    setUser(user);
-    return { user };
+    setUserCur(data?.user);
+    return { data };
   };
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    setUser(null);
+    setUserCur(null);
   };
 
   useEffect(() => {
-    const session = supabase.auth.session();
-    setUser(session?.user ?? null);
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    localStorage.setItem("user",session?.user)
+    setUserCur(session?.user ?? null); })
   }, []);
 
 
   useEffect(() => {
     const fetchTasks = async () => {
-      if (user) {
+      if (userCur) {
         const { data: tasks, error } = await supabase
           .from('todo')
           .select('*')
-          .eq('user_id', user.id);
+          .eq('user_id', userCur.id);
         if (error) {
           console.error('Error fetching tasks:', error.message);
           return;
@@ -72,14 +75,14 @@ export const AppProvider = ({ children }) => {
     };
 
     fetchTasks();
-  }, [user]);
+  }, [userCur]);
 
   const addTask = async (newTask) => {
-    if (user) {
+    if (userCur) {
       const { data: task, error } = await supabase.from('tasks').insert([
         {
           ...newTask,
-          user_id: user.id,
+          user_id: userCur.id,
         },
       ]);
       if (error) {
@@ -91,7 +94,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const deleteTask = async (taskId) => {
-    if (user) {
+    if (userCur) {
       await supabase.from('tasks').delete().eq('id', taskId);
       const updatedTasks = tasks.filter((task) => task.id !== taskId);
       setTasks(updatedTasks);
@@ -99,7 +102,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const updateTaskCompletion = async (taskId, completed) => {
-    if (user) {
+    if (userCur) {
       const { data, error } = await supabase
         .from('tasks')
         .update({ completed })
@@ -116,7 +119,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const contextValue = {
-    user,
+    user:userCur,
     signUp,
     signIn,
     signOut,
@@ -129,4 +132,4 @@ export const AppProvider = ({ children }) => {
   return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;
 };
 
-export default supabase;
+ 

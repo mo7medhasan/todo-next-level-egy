@@ -5,20 +5,14 @@ import { SignInForm, SignUpForm } from "./components/AuthComponents";
 import { AppProvider, useAppContext } from './AppProvider'
 import LayoutAuth from './components/LayoutAuth';
 
-function PrivateRoute({ children }) {
+ function PrivateRoute({ children }) {
   const { user } = useAppContext();
+  if (!user&&!localStorage.getItem("user")) {
+      // Redirect them to the /signin page, but save the current location they were trying to go to
+      return <Navigate to="/signin" replace />;
+  }
 
-  return (
-    <Route
-      render={({ location }) =>
-        user ? (
-          children
-        ) : (
-          <Navigate to="/signin" replace state={{ from: location }} />
-        )
-      }
-    />
-  );
+  return children;
 }
 function App() {
   return (
