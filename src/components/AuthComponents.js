@@ -12,7 +12,7 @@ const NavigateHome = ({showPopup}) => {
             : "popup hidden"
         }
       >
-        <section className="popup-main  shadow p-5  bg-white rounded-lg  max-w-xs w-full h-[50%]">
+        <section className="popup-main  shadow p-5 flex justify-center items-center bg-white rounded-lg  max-w-xs w-full h-[50%]">
           <NavLink
             to="/"
             className={
