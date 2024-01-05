@@ -2,13 +2,38 @@ import React, { useState } from "react";
 import { useAppContext } from "../AppProvider";
 import { NavLink, Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
-
+const NavigateHome = (showPopup) => {
+  return showPopup && (
+      <div
+        className={
+          showPopup
+            ? "popup fixed z-50 h-full inset-0  bg-black/10 w-full flex justify-center items-center"
+            : "popup hidden"
+        }
+      >
+        <section className="popup-main  shadow p-5  bg-white rounded-lg  max-w-xs w-full">
+          <NavLink
+            to="/"
+            className={
+              "bg-amber-500 shadow-xl mt-4 my-2   p-2 px-6 rounded-xl font-bold text-lg text-black "
+            }
+          >
+            home
+          </NavLink>
+        </section>
+      </div>
+    );
+  
+};
 const SignInForm = () => {
   const { signIn } = useAppContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const [showPopup, setShowPopup] = useState(false);
+  const togglePopup = () => {
+     setShowPopup(!showPopup);
+   };
   const handleSignIn = async (e) => {
     e.preventDefault();
 
@@ -22,28 +47,32 @@ const SignInForm = () => {
     if (error) {
       setError(error.message);
       toast.error(error.message);
-    } else {setTimeout(() => {
-      toast.success("successful sign-in");
-        <Navigate to="/"  />;
-      }, 200);
+    } else {<Navigate to="/" replace/>
+      toast.success("successful sign-in"); 
+      setTimeout(() => {
       
+        togglePopup()
+       
+      }, 200);
     }
   };
 
-  return (
+  return (<>
     <form onSubmit={handleSignIn} className="flex flex-col gap-4 p-4">
       <h2 className="text-3xl font-bold font-sans text-amber-500">Sign In</h2>
 
       <input
         type="email"
-        placeholder="Email" required
+        placeholder="Email"
+        required
         className="h-10 bg-slate-300/90 rounded-full p-2 my-2 px-4"
         value={email}
         autoComplete="email"
         onChange={(e) => setEmail(e.target.value)}
       />
       <input
-        type="password" required
+        type="password"
+        required
         placeholder="Password"
         value={password}
         autoComplete="password"
@@ -62,6 +91,8 @@ const SignInForm = () => {
         </button>
       </div>
     </form>
+    <NavigateHome  showPopup={showPopup}/>
+   </>
   );
 };
 
@@ -70,7 +101,10 @@ const SignUpForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
+  const [showPopup, setShowPopup] = useState(false);
+  const togglePopup = () => {
+     setShowPopup(!showPopup);
+   };
   const [error, setError] = useState("");
 
   const handleSignUp = async (e) => {
@@ -85,22 +119,19 @@ const SignUpForm = () => {
       return toast.error("The password does not match");
 
     const { user, error } = await signUp(email.trim(), password.trim());
-  
+
     if (error) {
       setError(error.message);
       toast.error(error.message);
-    } else {
-      setTimeout(() => {  
-
-        toast.success("successful sign-up");
+    } else {  toast.success("successful sign-up");
         <Navigate to="/" replace />;
-       }, 200);
-      
-      
+      setTimeout(() => {
+        togglePopup()
+      }, 200);
     }
   };
 
-  return (
+  return (<>
     <form onSubmit={handleSignUp} className="flex flex-col gap-4 p-4">
       <h2 className="text-3xl font-bold font-sans text-amber-500">Sign Up</h2>
 
@@ -126,7 +157,6 @@ const SignUpForm = () => {
         type="password"
         required
         autoComplete="Password"
-
         placeholder="Confirm Password"
         value={confirmPassword}
         className="h-10 bg-slate-300/90 rounded-full p-2 my-2 px-4"
@@ -144,6 +174,7 @@ const SignUpForm = () => {
         </button>
       </div>
     </form>
+    <NavigateHome  showPopup={showPopup}/></>
   );
 };
 
