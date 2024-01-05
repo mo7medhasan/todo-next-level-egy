@@ -4,11 +4,11 @@ import { NavLink, Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const SignInForm = () => {
-  const { signIn,user } = useAppContext();
+  const { signIn } = useAppContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-console.log(user);
+
   const handleSignIn = async (e) => {
     e.preventDefault();
 

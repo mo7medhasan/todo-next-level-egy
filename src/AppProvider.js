@@ -62,40 +62,42 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     const fetchTasks = async () => {
       if (userCur) {
-        const { data: tasks, error } = await supabase
+        const { data, error } = await supabase
           .from('todo')
-          .select('*')
-          .eq('user_id', userCur.id);
+          .select('')
+          .eq('user_id',userCur?.id);
         if (error) {
           console.error('Error fetching tasks:', error.message);
           return;
         }
-        setTasks(tasks ?? []);
+        setTasks(data ?? []);
       }
     };
 
     fetchTasks();
+    
   }, [userCur]);
 
   const addTask = async (newTask) => {
     if (userCur) {
-      const { data: task, error } = await supabase.from('tasks').insert([
+      const { data, error } = await supabase.from('todo').insert([
         {
           ...newTask,
           user_id: userCur.id,
         },
-      ]);
+      ]).select();
       if (error) {
         console.error('Error adding task:', error.message);
         return;
       }
-      setTasks([...tasks, task[0]]);
+      setTasks([...tasks, data[0]]);
+      return{ data, error }
     }
   };
 
   const deleteTask = async (taskId) => {
     if (userCur) {
-      await supabase.from('tasks').delete().eq('id', taskId);
+      await supabase.from('todo').delete().eq('id', taskId);
       const updatedTasks = tasks.filter((task) => task.id !== taskId);
       setTasks(updatedTasks);
     }
@@ -104,7 +106,7 @@ export const AppProvider = ({ children }) => {
   const updateTaskCompletion = async (taskId, completed) => {
     if (userCur) {
       const { data, error } = await supabase
-        .from('tasks')
+        .from('todo')
         .update({ completed })
         .eq('id', taskId);
       if (error) {
@@ -117,7 +119,22 @@ export const AppProvider = ({ children }) => {
       setTasks(updatedTasks);
     }
   };
-
+  const updateTask= async (taskId, newTask) => {
+    if (userCur) {
+      const { data, error } = await supabase
+        .from('todo')
+        .update({ text: newTask})
+        .eq('id', taskId);
+      if (error) {
+        console.error('Error updating task:', error.message);
+        return;
+      }
+      const updatedTasks = tasks.map((task) =>
+        task.id === taskId ? { ...task,text: newTask } : task
+      );
+      setTasks(updatedTasks);
+    }
+  };
   const contextValue = {
     user:userCur,
     signUp,
@@ -125,7 +142,7 @@ export const AppProvider = ({ children }) => {
     signOut,
     tasks,
     addTask,
-    deleteTask,
+    deleteTask,updateTask,
     updateTaskCompletion,
   };
 
