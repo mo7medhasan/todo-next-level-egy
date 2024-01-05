@@ -22,11 +22,11 @@ const SignInForm = () => {
     if (error) {
       setError(error.message);
       toast.error(error.message);
-    } else {
-      toast.success(" successful sign-in");
-      setTimeout(() => {
-        <Navigate to="/" replace />;
+    } else {setTimeout(() => {
+      toast.success("successful sign-in");
+        <Navigate to="/"  />;
       }, 200);
+      
     }
   };
 
@@ -90,12 +90,13 @@ const SignUpForm = () => {
       setError(error.message);
       toast.error(error.message);
     } else {
-      toast.success("successful sign-up");
       setTimeout(() => {  
 
+        toast.success("successful sign-up");
         <Navigate to="/" replace />;
-      }, 200);
-      // Handle successful sign-up (redirect, update UI, etc.)
+       }, 200);
+      
+      
     }
   };
 
