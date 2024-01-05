@@ -2,39 +2,38 @@ import React, { useState } from "react";
 import { useAppContext } from "../AppProvider";
 import { NavLink, Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
-const NavigateHome = ({showPopup}) => {
-  return (
-    showPopup? (
-      <div
-        className={
-          showPopup
-            ? "popup fixed z-50 h-full inset-0  bg-black/10 w-full flex justify-center items-center"
-            : "popup hidden"
-        }
-      >
-        <section className="popup-main  shadow p-5 flex justify-center items-center bg-white rounded-lg  max-w-xs w-full h-[50%]">
-          <NavLink
-            to="/"
-            className={
-              "bg-amber-500 shadow-xl mt-4 my-2   p-2 px-6 rounded-xl font-bold text-lg text-black "
-            }
-          >
-            home
-          </NavLink>
-        </section>
-      </div>
-    ):null
-  );
+const NavigateHome = ({ showPopup }) => {
+  return showPopup ? (
+    <div
+      className={
+        showPopup
+          ? "popup fixed z-50 h-full inset-0  bg-black/10 w-full flex justify-center items-center"
+          : "popup hidden"
+      }
+    >
+      <section className="popup-main  shadow p-5 flex justify-center items-center bg-white rounded-lg  max-w-xs w-full h-[50%]">
+        <NavLink
+          to="/"
+          className={
+            "bg-amber-500 shadow-xl mt-4 my-2   p-2 px-6 rounded-xl font-bold text-lg text-black "
+          }
+        >
+          home
+        </NavLink>
+      </section>
+    </div>
+  ) : null;
 };
 const SignInForm = () => {
-  const { signIn } = useAppContext();
+  const { signIn,user } = useAppContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const togglePopup = () => {
     setShowPopup(!showPopup);
   };
+  
+if(user) return <Navigate to="/" replace />;
   const handleSignIn = async (e) => {
     e.preventDefault();
 
@@ -46,12 +45,13 @@ const SignInForm = () => {
       return toast.error("The password is not enough");
     const { user, error } = await signIn(email.trim(), password.trim());
     if (error) {
-      setError(error.message);
+     
       toast.error(error.message);
-    } else {   togglePopup();
+    } else {
+    localStorage.setItem("user",user)
+      togglePopup();
       toast.success("successful sign-in");
-      <Navigate to="/" replace />;
-   
+         return <Navigate to="/" replace />;
     }
   };
 
@@ -96,7 +96,7 @@ const SignInForm = () => {
 };
 
 const SignUpForm = () => {
-  const { signUp } = useAppContext();
+  const { signUp,user } = useAppContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -104,8 +104,8 @@ const SignUpForm = () => {
   const togglePopup = () => {
     setShowPopup(!showPopup);
   };
-  const [error, setError] = useState("");
-
+ 
+if(user) return <Navigate to="/" replace />;
   const handleSignUp = async (e) => {
     e.preventDefault();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -120,12 +120,13 @@ const SignUpForm = () => {
     const { user, error } = await signUp(email.trim(), password.trim());
 
     if (error) {
-      setError(error.message);
       toast.error(error.message);
-    } else {   togglePopup();
+    } else {
+    localStorage.setItem("user",user)
+
+      togglePopup();
       toast.success("successful sign-up");
-      <Navigate to="/" replace />;
-    
+    return <Navigate to="/" replace />;
     }
   };
 

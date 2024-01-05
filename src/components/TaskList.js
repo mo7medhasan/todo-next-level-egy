@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useAppContext } from "../AppProvider";
 import toast from "react-hot-toast";
 import PopupEditTask from "./PopupEditTask";
@@ -7,14 +7,13 @@ const TaskList = ({ task }) => {
     const [checkCompleted, setCheckCompleted] = useState(task.completed)
   
   const { updateTaskCompletion, deleteTask } = useAppContext();
-  const handleTaskCompletion=()=>{
+  const handleTaskCompletion=()=>
+  {
+    setCheckCompleted(prev=>!prev)
     updateTaskCompletion(task.id,checkCompleted )
-    if(checkCompleted)
-    toast.success("task completed")
+    if(checkCompleted) toast.success("task completed")
   }
-useEffect(() => {
-    handleTaskCompletion()
-}, [checkCompleted])
+
 
 
   return (
@@ -24,7 +23,7 @@ useEffect(() => {
           type="checkbox"
 
           defaultChecked={checkCompleted}
-          onChange={() =>setCheckCompleted(prev=>!prev)}
+          onChange={handleTaskCompletion}
           id={task.id}
         />
         <label
