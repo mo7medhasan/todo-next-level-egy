@@ -7,7 +7,7 @@ import LayoutAuth from './components/LayoutAuth';
 
  function PrivateRoute({ children }) {
   const { user } = useAppContext();
-  if (!user&&!localStorage.getItem("user")) {
+  if (!user) {
       return <Navigate to="/signin" replace />;
   }
 

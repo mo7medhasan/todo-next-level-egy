@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { useAppContext } from "../AppProvider";
 import { NavLink, Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
-const NavigateHome = (showPopup) => {
-  return showPopup && (
+const NavigateHome = ({showPopup}) => {
+  return (
+    showPopup? (
       <div
         className={
           showPopup
@@ -22,8 +23,8 @@ const NavigateHome = (showPopup) => {
           </NavLink>
         </section>
       </div>
-    );
-  
+    ):null
+  );
 };
 const SignInForm = () => {
   const { signIn } = useAppContext();
@@ -32,8 +33,8 @@ const SignInForm = () => {
   const [error, setError] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const togglePopup = () => {
-     setShowPopup(!showPopup);
-   };
+    setShowPopup(!showPopup);
+  };
   const handleSignIn = async (e) => {
     e.preventDefault();
 
@@ -47,52 +48,50 @@ const SignInForm = () => {
     if (error) {
       setError(error.message);
       toast.error(error.message);
-    } else {<Navigate to="/" replace/>
-      toast.success("successful sign-in"); 
-      setTimeout(() => {
-      
-        togglePopup()
-       
-      }, 200);
+    } else {   togglePopup();
+      toast.success("successful sign-in");
+      <Navigate to="/" replace />;
+   
     }
   };
 
-  return (<>
-    <form onSubmit={handleSignIn} className="flex flex-col gap-4 p-4">
-      <h2 className="text-3xl font-bold font-sans text-amber-500">Sign In</h2>
+  return (
+    <>
+      <form onSubmit={handleSignIn} className="flex flex-col gap-4 p-4">
+        <h2 className="text-3xl font-bold font-sans text-amber-500">Sign In</h2>
 
-      <input
-        type="email"
-        placeholder="Email"
-        required
-        className="h-10 bg-slate-300/90 rounded-full p-2 my-2 px-4"
-        value={email}
-        autoComplete="email"
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        required
-        placeholder="Password"
-        value={password}
-        autoComplete="password"
-        className="h-10 bg-slate-300/90 rounded-full p-2 my-2 px-4"
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <div className="flex justify-between items-center">
-        <NavLink to="/signup" className={"hover:underline text-blue-500"}>
-          create account
-        </NavLink>{" "}
-        <button
-          type="submit"
-          className="bg-amber-500 shadow-xl mt-4 my-2   p-2 px-6 rounded-xl font-bold text-lg text-black "
-        >
-          Sign In
-        </button>
-      </div>
-    </form>
-    <NavigateHome  showPopup={showPopup}/>
-   </>
+        <input
+          type="email"
+          placeholder="Email"
+          required
+          className="h-10 bg-slate-300/90 rounded-full p-2 my-2 px-4"
+          value={email}
+          autoComplete="email"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          required
+          placeholder="Password"
+          value={password}
+          autoComplete="password"
+          className="h-10 bg-slate-300/90 rounded-full p-2 my-2 px-4"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <div className="flex justify-between items-center">
+          <NavLink to="/signup" className={"hover:underline text-blue-500"}>
+            create account
+          </NavLink>{" "}
+          <button
+            type="submit"
+            className="bg-amber-500 shadow-xl mt-4 my-2   p-2 px-6 rounded-xl font-bold text-lg text-black "
+          >
+            Sign In
+          </button>
+        </div>
+      </form>
+      <NavigateHome showPopup={showPopup} />
+    </>
   );
 };
 
@@ -103,8 +102,8 @@ const SignUpForm = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const togglePopup = () => {
-     setShowPopup(!showPopup);
-   };
+    setShowPopup(!showPopup);
+  };
   const [error, setError] = useState("");
 
   const handleSignUp = async (e) => {
@@ -123,58 +122,59 @@ const SignUpForm = () => {
     if (error) {
       setError(error.message);
       toast.error(error.message);
-    } else {  toast.success("successful sign-up");
-        <Navigate to="/" replace />;
-      setTimeout(() => {
-        togglePopup()
-      }, 200);
+    } else {   togglePopup();
+      toast.success("successful sign-up");
+      <Navigate to="/" replace />;
+    
     }
   };
 
-  return (<>
-    <form onSubmit={handleSignUp} className="flex flex-col gap-4 p-4">
-      <h2 className="text-3xl font-bold font-sans text-amber-500">Sign Up</h2>
+  return (
+    <>
+      <form onSubmit={handleSignUp} className="flex flex-col gap-4 p-4">
+        <h2 className="text-3xl font-bold font-sans text-amber-500">Sign Up</h2>
 
-      <input
-        type="email"
-        required
-        placeholder="Email"
-        value={email}
-        autoComplete="email"
-        className="h-10 bg-slate-300/90 rounded-full p-2 my-2 px-4"
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        required
-        autoComplete="Password"
-        className="h-10 bg-slate-300/90 rounded-full p-2 my-2 px-4"
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <input
-        type="password"
-        required
-        autoComplete="Password"
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        className="h-10 bg-slate-300/90 rounded-full p-2 my-2 px-4"
-        onChange={(e) => setConfirmPassword(e.target.value)}
-      />
-      <div className="flex justify-between items-center">
-        <NavLink to="/signin" className={"hover:underline text-blue-500"}>
-          or log in
-        </NavLink>{" "}
-        <button
-          type="submit"
-          className="bg-amber-500 shadow-xl mt-4 my-2   p-2 px-6 rounded-full font-bold text-lg text-black "
-        >
-          Sign Up
-        </button>
-      </div>
-    </form>
-    <NavigateHome  showPopup={showPopup}/></>
+        <input
+          type="email"
+          required
+          placeholder="Email"
+          value={email}
+          autoComplete="email"
+          className="h-10 bg-slate-300/90 rounded-full p-2 my-2 px-4"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          required
+          autoComplete="Password"
+          className="h-10 bg-slate-300/90 rounded-full p-2 my-2 px-4"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <input
+          type="password"
+          required
+          autoComplete="Password"
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          className="h-10 bg-slate-300/90 rounded-full p-2 my-2 px-4"
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
+        <div className="flex justify-between items-center">
+          <NavLink to="/signin" className={"hover:underline text-blue-500"}>
+            or log in
+          </NavLink>{" "}
+          <button
+            type="submit"
+            className="bg-amber-500 shadow-xl mt-4 my-2   p-2 px-6 rounded-full font-bold text-lg text-black "
+          >
+            Sign Up
+          </button>
+        </div>
+      </form>
+      <NavigateHome showPopup={showPopup} />
+    </>
   );
 };
 
