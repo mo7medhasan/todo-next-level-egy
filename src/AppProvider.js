@@ -133,6 +133,7 @@ export const AppProvider = ({ children }) => {
         task.id === taskId ? { ...task,text: newTask } : task
       );
       setTasks(updatedTasks);
+      return { data, error } 
     }
   };
   const contextValue = {

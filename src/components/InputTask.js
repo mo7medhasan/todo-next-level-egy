@@ -9,7 +9,7 @@ const InputTask = () => {
     const handleAddTask = async (e) => {
       e.preventDefault();
       if (task.trim().length < 1)
-        return toast.error("The password is not enough");
+        return toast.error("The  task text is not enough");
   
       const { data, error } = await addTask({
        text: task
